@@ -1,0 +1,23 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.writePublicacionesDiscriminadas = void 0;
+const constants_1 = require("../constants");
+const genPublicacionesDiscriminadasXlsx_1 = require("./genPublicacionesDiscriminadasXlsx");
+const getPublicacionesDiscriminadas_1 = require("./getPublicacionesDiscriminadas");
+const getWorkSheet_1 = require("./getWorkSheet");
+const serializeCbSheetJson_1 = require("./serializeCbSheetJson");
+const serializeMlSheetJson_1 = require("./serializeMlSheetJson");
+const sheetToJson_1 = require("./sheetToJson");
+const writeXlsxFile_1 = require("./writeXlsxFile");
+const writePublicacionesDiscriminadas = ({ cbWorkBook, mlWorkBook, outputName }) => {
+    const mlWorkSheet = (0, getWorkSheet_1.getWorkSheet)({ workBook: mlWorkBook, sheetIndex: constants_1.SHEET_INDEX.ml });
+    const cbWorkSheet = (0, getWorkSheet_1.getWorkSheet)({ workBook: cbWorkBook, sheetIndex: constants_1.SHEET_INDEX.cb });
+    const cbSheetJson = (0, sheetToJson_1.sheetToJson)({ workSheet: cbWorkSheet });
+    const mlSheetJson = (0, sheetToJson_1.sheetToJson)({ workSheet: mlWorkSheet });
+    const serializedCbProducts = (0, serializeCbSheetJson_1.serializeCbSheetJson)({ cbSheetJson });
+    const serializedMlProducts = (0, serializeMlSheetJson_1.serializeMlSheetJson)({ mlSheetJson });
+    const publicacionesDiscriminadas = (0, getPublicacionesDiscriminadas_1.getPublicacionesDiscriminadas)({ serializedCbProducts, serializedMlProducts });
+    const outputWorkbook = (0, genPublicacionesDiscriminadasXlsx_1.genPublicacionesDiscriminadasWorkBook)({ publicacionesDiscriminadas, serializedMlProducts });
+    (0, writeXlsxFile_1.writeXslxFile)({ outputWorkbook, outputName });
+};
+exports.writePublicacionesDiscriminadas = writePublicacionesDiscriminadas;
